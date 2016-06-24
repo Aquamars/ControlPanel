@@ -38,7 +38,7 @@ function checkCookie() {
         $("#user").append(user);
         return "200";
     } else {
-        alert("Warrong Username or Password !!");
+        alert("Wrong Username or Password !!");
         document.location = "login.html";
         return "";
     }
@@ -69,19 +69,53 @@ function statusEnter() {
         var mac = getCookie('mac');
         var redirect = getCookie('redirect');
         lastActiveTime(MachineName);
-        console.log(MachineName+":"+url+":"+mac);
-        if(redirect==="false"){
-            redirect="No"
-        }else{
-            redirect="Yes"
+        console.log(MachineName + ":" + url + ":" + mac);
+        if (redirect === "false") {
+            redirect = "No"
+        } else {
+            redirect = "Yes"
         }
-        $( "#macAddr" ).append(mac);
-        $( "#redirect" ).append(redirect);
-        $( "#Machinename" ).append(MachineName);
-        $( "li#Machinename" ).append(MachineName);
-        $( "#Adurl" ).append("<a href='"+url+"' target='_blank'>"+url+"</a>");
-        $( "#myframe" ).attr('src',url);
+        $("#macAddr").append(mac);
+        $("#redirect").append(redirect);
+        $("#Machinename").append(MachineName);
+        $("li#Machinename").append(MachineName);
+        $("#curl").val(url);
+        $("#Adurl").append("<a href='" + url + "' target='_blank'>" + url + "</a>");
+        $("#myframe").attr('src', url);
     }
+}
+
+function updateUrl() {
+    var url = $('#curl').val();    
+    if ($('.error').css('display') == 'none'||$('.error').length == 0) {
+        if (confirm("Are you sure change AD url?\n" + "Your url : " + url)) {
+            var MachineName = getCookie('cname');
+            setPageUrl(MachineName, url);
+            getAllMachine();
+            saveStatusCookie(MachineName);
+            document.location = "status.html";
+        }
+    }else{
+        alert("Wrong URL !");
+    }
+
+}
+
+function Change(str) {
+    $("#" + str + "-btn-update").show();
+    $("#" + str + "-btn-cancel").show();
+    $("#" + str + "-btn-change").hide();
+    $("#" + str).attr("readonly", false);
+    $("#curl").val("");
+}
+
+function Cancel(str) {
+    $("#" + str + "-btn-update").hide();
+    $("#" + str + "-btn-cancel").hide();
+    $("#" + str + "-btn-change").show();
+    $("#" + str).attr("readonly", true);
+    var url = getCookie('url');
+    $("#curl").val(url);
 }
 
 function loginEnter() {
@@ -106,11 +140,9 @@ function login(user, pwd) {
         console.log(rep);
         var obj = JSON.parse(rep);
         return obj.status;
+    } catch (err) {
+        return "error";
     }
-    catch(err) {
-       return "error";
-    }
-    
 }
 
 function getAllMachine() {
@@ -139,13 +171,32 @@ function getAllMachine() {
     return obj.status;
 }
 
+function setPageUrl(user, url) {
+    try {
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("GET", "http://tarsan.ddns.net:8080/TARSAN/service/main?service=setPageUrl&jsonPara=[(%22username%22:%22" + user + "%22),(%22url%22:%22" + url + "%22)]", false);
+        xhttp.send();
+        var rep = xhttp.responseText;
+        rep = rep.replace(/\{/g, "");
+        rep = rep.replace(/\}/g, "");
+        rep = rep.replace(/\[/g, "");
+        rep = rep.replace(/\]/g, "");
+        rep = "{" + rep + "}";
+        console.log(rep);
+        var obj = JSON.parse(rep);
+        return obj.status;
+    } catch (err) {
+        return "error";
+    }
+}
+
 function saveStatusCookie(user) {
     var msg = getCookie('allContemt');
     var msg = msg.split(",");
     for (var i = 0; i < msg.length; i++) {
         var content = msg[i].split("@");
         var name = content[0];
-        name = name.replace(" ","");
+        name = name.replace(" ", "");
         if (name == user) {
             console.log(content);
             var url = content[1];
@@ -165,7 +216,7 @@ function saveStatusCookie(user) {
 
 function lastActiveTime(name) {
     var xhttp = new XMLHttpRequest();
-    xhttp.open("GET", "http://tarsan.ddns.net:8080/TARSAN/service/main?service=getLastActive&jsonPara=[(%22username%22:%22"+name+"%22)]", false);
+    xhttp.open("GET", "http://tarsan.ddns.net:8080/TARSAN/service/main?service=getLastActive&jsonPara=[(%22username%22:%22" + name + "%22)]", false);
     xhttp.send();
     var rep = xhttp.responseText;
     rep = rep.replace(/\{/g, "");
@@ -176,18 +227,18 @@ function lastActiveTime(name) {
     console.log(rep);
     var obj = JSON.parse(rep);
     var msg = obj.message;
-    if (obj.status != "200"){
+    if (obj.status != "200") {
         // $("#lastActiveTime").append(obj.status);
         document.getElementById("lastActiveTime").innerHTML = obj.status;
-    }else{
+    } else {
         // $("#lastActiveTime").append(obj.message);
         document.getElementById("lastActiveTime").innerHTML = obj.message;
     }
 }
 
 function MachineGenerator(name, url) {
-    name = name.replace(" ","");
-    $("#reviewAll").append('<div class=\"col-lg-3 col-md-3 col-sm-12 col-xs-12\"><div class=\"info-box ' + InfoBoxColor[makeUniqueRandom()] + '\"><i class=\"fa fa-hdd-o\"></i><div class=\"count\"><a onclick=\"saveStatusCookie('+"'"+name+"'"+')\" href=\"status.html\"><font color=\"#FFFFFF\">'+name+'</font></a></div><div><a href=\"' + url + '\" target=\"_blank\">Preview<iframe  class=\"col-md-12 col-sm-12 col-xs-12\" src=\"' + url + '\" frameborder=\"0\" allowfullscreen></iframe></a></div></div></div>');
+    name = name.replace(" ", "");
+    $("#reviewAll").append('<div class=\"col-lg-3 col-md-3 col-sm-12 col-xs-12\"><div class=\"info-box ' + InfoBoxColor[makeUniqueRandom()] + '\"><i class=\"fa fa-hdd-o\"></i><div class=\"count\"><a onclick=\"saveStatusCookie(' + "'" + name + "'" + ')\" href=\"status.html\"><font color=\"#FFFFFF\">' + name + '</font></a></div><div><a href=\"' + url + '\" target=\"_blank\">Preview<iframe  class=\"col-md-12 col-sm-12 col-xs-12\" src=\"' + url + '\" frameborder=\"0\" allowfullscreen></iframe></a></div></div></div>');
 }
 
 var InfoBoxColor = ["linkedin-bg", "twitter-bg", "facebook-bg", "dark-bg", "brown-bg", "teal-bg", "magenta-bg", "lime-bg", "pink-bg", "purple-bg", "orange-bg", "yellow-bg", "green-bg", "blue-bg", "red-bg"];

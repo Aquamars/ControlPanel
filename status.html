@@ -404,10 +404,26 @@
                                 </div>
                                 <div class="panel panel-warning">
                                     <div class="panel-heading">AD Url</div>
-                                    <div id="Adurl" class="panel-content"></div>
-                                    <div align="center" style="margin:0 auto;">
-                                        <iframe id="myframe" class="col-md-12 col-sm-12 col-xs-12" align="center" frameborder="1" allowfullscreen></iframe>
+                                    <div id="Adurl" class="panel-content">
+                                        <form class="form-validate form-horizontal" id="feedback_form">
+                                            <div class="form-group ">
+                                                <label for="curl" class="control-label col-lg-2">Website</label>
+                                                <div class="col-lg-10">
+                                                    <input class="form-control " id="curl" type="url" name="url" readonly/>
+                                                </div>
+                                                <div class="col-lg-offset-2 col-lg-10">
+                                                    <a id="curl-btn-update" class="btn btn-primary" onclick="updateUrl()" style="display:none">Update</a>
+                                                    <a id="curl-btn-cancel" class="btn btn-default"  style="display:none" onclick="Cancel('curl')">Cancel</a>
+                                                    <button id="curl-btn-change" class="btn btn-info " type="button" onclick="Change('curl')">Change</button>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                            </div>
+                                        </form>
                                     </div>
+                                </div>
+                                <div align="center" style="margin:0 auto;">
+                                    <iframe id="myframe" class="col-md-12 col-sm-12 col-xs-12" align="center" frameborder="1" allowfullscreen></iframe>
                                 </div>
                                 <!-- <div class="panel panel-danger">
                                     <div class="panel-heading">Panel heading</div>
@@ -467,6 +483,10 @@
         <!-- custom select -->
         <script src="js/jquery.customSelect.min.js"></script>
         <script src="assets/chart-master/Chart.js"></script>
+        <!-- jquery validate js -->
+        <script type="text/javascript" src="js/jquery.validate.min.js"></script>
+        <!-- custom form validation script for this page-->
+        <script src="js/form-validation-script.js"></script>
         <!--custome script for all page-->
         <script src="js/scripts.js"></script>
         <!-- custom script for this page-->
