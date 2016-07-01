@@ -48,10 +48,11 @@ function eraseCookie() {
     setCookie('user', "", 365);
     setCookie('pwd', "", 365);
     setCookie('cname', "", 365);
-    setCookie('url', "", 365);
+    setCookie('curl', "", 365);
     setCookie('mac', "", 365);
     setCookie('redirect', "", 365);
-    setCookie('allContemt', "", 365);
+    setCookie('time', "", 365);
+    setCookie('allContent', "", 365);
     console.log("eraseCookie");
     document.location = "login.html";
 }
@@ -65,11 +66,12 @@ function indexEnter() {
 function statusEnter() {
     if (checkCookie() === "200") {
         var MachineName = getCookie('cname');
-        var url = getCookie('url');
+        var url = getCookie('curl');
         var mac = getCookie('mac');
         var redirect = getCookie('redirect');
+        var time = getCookie('time');
         lastActiveTime(MachineName);
-        console.log(MachineName + ":" + url + ":" + mac);
+        console.log(MachineName + ":" + url + ":" + mac+":"+time);
         if (redirect === "false") {
             redirect = "No"
         } else {
@@ -79,15 +81,17 @@ function statusEnter() {
         $("#redirect").append(redirect);
         $("#Machinename").append(MachineName);
         $("li#Machinename").append(MachineName);
+        $("#time").val(time);
         $("#curl").val(url);
-        $("#Adurl").append("<a href='" + url + "' target='_blank'>" + url + "</a>");
-        $("#myframe").attr('src', url);
+        $("#link").append("<a href='" + url + "' target='_blank'>" + "  link" + "</a>");
+        $("#iFramePhone").attr('src', url);
+        $('#inputUser').val(MachineName);
     }
 }
 
 function updateUrl() {
-    var url = $('#curl').val();    
-    if ($('.error').css('display') == 'none'||$('.error').length == 0) {
+    var url = $('#curl').val();
+    if ($('.error').css('display') == 'none'||$('.error').length == 0 && url.length !=0) {
         if (confirm("Are you sure change AD url?\n" + "Your url : " + url)) {
             var MachineName = getCookie('cname');
             setPageUrl(MachineName, url);
@@ -98,15 +102,30 @@ function updateUrl() {
     }else{
         alert("Wrong URL !");
     }
-
 }
+
+function updateTime() {
+    var time = $('#time').val();
+    if (!(time<0 || time >7200) && isNaN(time)) {
+        alert("Wrong input !");
+    }else{
+        if (confirm("Are you sure change Session Time\n" + "Your time : " + time)) {
+            var MachineName = getCookie('cname');
+            setSessionTime(MachineName, time);
+            getAllMachine();
+            saveStatusCookie(MachineName);
+            document.location = "status.html";
+        }
+    }
+}
+
 
 function Change(str) {
     $("#" + str + "-btn-update").show();
     $("#" + str + "-btn-cancel").show();
     $("#" + str + "-btn-change").hide();
     $("#" + str).attr("readonly", false);
-    $("#curl").val("");
+    $("#" + str).val("");
 }
 
 function Cancel(str) {
@@ -114,8 +133,8 @@ function Cancel(str) {
     $("#" + str + "-btn-cancel").hide();
     $("#" + str + "-btn-change").show();
     $("#" + str).attr("readonly", true);
-    var url = getCookie('url');
-    $("#curl").val(url);
+    var data = getCookie(str);
+    $("#" + str).val(data);
 }
 
 function loginEnter() {
@@ -159,7 +178,7 @@ function getAllMachine() {
     var obj = JSON.parse(rep);
     var msg = obj.message.split(",");
     if (obj.status != "200") return obj.status;
-    setCookie('allContemt', obj.message, 365);
+    setCookie('allContent', obj.message, 365);
     for (i = 0; i < msg.length; i++) {
         var content = msg[i].split("@");
         var name = content[0];
@@ -190,8 +209,27 @@ function setPageUrl(user, url) {
     }
 }
 
+function setSessionTime(user, time) {
+    try {
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("GET", "http://tarsan.ddns.net:8080/TARSAN/service/main?service=setSessionTime&jsonPara=[(%22username%22:%22" + user + "%22),(%22time%22:%22" + time + "%22)]", false);
+        xhttp.send();
+        var rep = xhttp.responseText;
+        rep = rep.replace(/\{/g, "");
+        rep = rep.replace(/\}/g, "");
+        rep = rep.replace(/\[/g, "");
+        rep = rep.replace(/\]/g, "");
+        rep = "{" + rep + "}";
+        console.log(rep);
+        var obj = JSON.parse(rep);
+        return obj.status;
+    } catch (err) {
+        return "error";
+    }
+}
+
 function saveStatusCookie(user) {
-    var msg = getCookie('allContemt');
+    var msg = getCookie('allContent');
     var msg = msg.split(",");
     for (var i = 0; i < msg.length; i++) {
         var content = msg[i].split("@");
@@ -202,13 +240,16 @@ function saveStatusCookie(user) {
             var url = content[1];
             var redirect = content[2];
             var mac = content[3];
+            var time = content[4];
             setCookie('cname', name, 365);
-            setCookie('url', url, 365);
+            setCookie('curl', url, 365);
             setCookie('mac', mac, 365);
             setCookie('redirect', redirect, 365);
+            setCookie('time', time, 365);
             console.log(name);
             console.log(url);
             console.log(mac);
+            console.log(time);
             return "";
         }
     }
@@ -235,6 +276,26 @@ function lastActiveTime(name) {
         document.getElementById("lastActiveTime").innerHTML = obj.message;
     }
 }
+
+function uploadImag(){
+    document.imgFrom.action = "http://tarsanad.ddns.net/NiceAdmin/upload.php";
+    document.getElementById("imgFrom").submit();
+    console.log("!!!");
+}
+
+$("#selectOption").change(function(){
+  /*
+  * $(this).val() : #test1 的 value 值
+  * $('#test1 :selected').text() : #test1 的 text 值     
+  */
+    var tmp = $('#selectOption :selected').val().split('x');
+    var width = tmp[0];
+    var height = tmp[1];
+    console.log(tmp);
+    $('#iFramePhone').width(width); 
+    $('#iFramePhone').height(height);
+    $('#showSize').text(width+"x"+height+" ("+$('#selectOption :selected').text()+")");
+});
 
 function MachineGenerator(name, url) {
     name = name.replace(" ", "");

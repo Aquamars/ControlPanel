@@ -1237,8 +1237,8 @@ div[data-role="editor-toolbar"] {
 }
 .panel.panel-warning .panel-heading,
 .panel.panel-warning .panel-footer {
-  background: #fcd588;
-  color: #815703;
+  background: #C98200;
+  color: #000000;
   border-color: #fabb3d;
 }
 .panel.panel-danger {
