@@ -71,7 +71,7 @@ function statusEnter() {
         var redirect = getCookie('redirect');
         var time = getCookie('time');
         lastActiveTime(MachineName);
-        console.log(MachineName + ":" + url + ":" + mac+":"+time);
+        console.log(MachineName + ":" + url + ":" + mac + ":" + time);
         if (redirect === "false") {
             redirect = "No"
         } else {
@@ -91,7 +91,7 @@ function statusEnter() {
 
 function updateUrl() {
     var url = $('#curl').val();
-    if ($('.error').css('display') == 'none'||$('.error').length == 0 && url.length !=0) {
+    if ($('.error').css('display') == 'none' || $('.error').length == 0 && url.length != 0) {
         if (confirm("Are you sure change AD url?\n" + "Your url : " + url)) {
             var MachineName = getCookie('cname');
             setPageUrl(MachineName, url);
@@ -99,16 +99,16 @@ function updateUrl() {
             saveStatusCookie(MachineName);
             document.location = "status.html";
         }
-    }else{
+    } else {
         alert("Wrong URL !");
     }
 }
 
 function updateTime() {
     var time = $('#time').val();
-    if (!(time<0 || time >7200) && isNaN(time)) {
+    if (!(time < 0 || time > 7200) && isNaN(time)) {
         alert("Wrong input !");
-    }else{
+    } else {
         if (confirm("Are you sure change Session Time\n" + "Your time : " + time)) {
             var MachineName = getCookie('cname');
             setSessionTime(MachineName, time);
@@ -277,24 +277,46 @@ function lastActiveTime(name) {
     }
 }
 
-function uploadImag(){
+function uploadImag() {
     document.imgFrom.action = "http://tarsanad.ddns.net/NiceAdmin/upload.php";
     document.getElementById("imgFrom").submit();
     console.log("!!!");
 }
 
-$("#selectOption").change(function(){
-  /*
-  * $(this).val() : #test1 的 value 值
-  * $('#test1 :selected').text() : #test1 的 text 值     
-  */
+$("#selectOption").change(function() {
+    /*
+     * $(this).val() : #test1 的 value 值
+     * $('#test1 :selected').text() : #test1 的 text 值     
+     */
     var tmp = $('#selectOption :selected').val().split('x');
     var width = tmp[0];
     var height = tmp[1];
     console.log(tmp);
-    $('#iFramePhone').width(width); 
-    $('#iFramePhone').height(height);
-    $('#showSize').text(width+"x"+height+" ("+$('#selectOption :selected').text()+")");
+    if ($("#landscape").prop("checked")) {
+        $('#iFramePhone').width(height);
+        $('#iFramePhone').height(width);
+        $('#showSize').text(height + "x" + width + " (" + $('#selectOption :selected').text() + ")");
+    } else {
+        $('#iFramePhone').width(width);
+        $('#iFramePhone').height(height);
+        $('#showSize').text(width + "x" + height + " (" + $('#selectOption :selected').text() + ")");
+    }
+
+});
+
+$("#landscape").click(function() {
+    var tmp = $('#selectOption :selected').val().split('x');
+    var width = tmp[0];
+    var height = tmp[1];
+    if ($("#landscape").prop("checked")) {
+        $('#iFramePhone').width(height);
+        $('#iFramePhone').height(width);
+        $('#showSize').text(height + "x" + width + " (" + $('#selectOption :selected').text() + ")");
+    } else {
+        $('#iFramePhone').width(width);
+        $('#iFramePhone').height(height);
+        $('#showSize').text(width + "x" + height + " (" + $('#selectOption :selected').text() + ")");
+    }
 });
 
 function MachineGenerator(name, url) {
