@@ -69,11 +69,31 @@ function getschedule(user) {
 //     return obj.status;
 }
 
+function delSchedule(user,date){
+	if (confirm("Are you sure want remove this schedule?\n" + "schedule time : " + date)) {
+        var xhttp = new XMLHttpRequest();
+	    xhttp.open("GET", "http://tarsan.ddns.net:8080/TARSAN/service/main?service=delSplashSchedule&jsonPara=[(%22username%22:%22" + user + "%22),(%22date%22:%22" + date + "%22)]", false);
+	    xhttp.send();
+	    var rep = xhttp.responseText;
+	    rep = rep.replace(/\{/g, "");
+	    rep = rep.replace(/\}/g, "");
+	    rep = rep.replace(/\[/g, "");
+	    rep = rep.replace(/\]/g, "");
+	    rep = "{" + rep + "}";
+	    console.log(rep);
+	    var obj = JSON.parse(rep);
+	    alert(obj.message);
+	    document.location = "status.html";
+		// if (obj.status != "200")return "";
+    }	
+}
+
 
 (function($) {
 	
 	"use strict";
 	var MachineName = getCookie('cname');
+	MachineName = MachineName.replace(' ',"");
 	var options = {
 		events_source: getschedule(MachineName),
 		view: 'month',
@@ -88,8 +108,9 @@ function getschedule(user) {
 			list.html('');
 
 			$.each(events, function(key, val) {
+				var delDate = val.title.replace(" ","-");
 				$(document.createElement('li'))
-					.html('<a href="' + val.url + '">' + val.title + '</a>')
+					.html('<div><div style=" float:left;width:49%;"><a href="' + val.url + '">' + val.title + '</a></div><div style="float:left;width:49%;"><a class="btn btn-danger btn-sm" align="right" onclick="delSchedule('+"'"+MachineName+"','"+delDate+"'"+')">Remove</a></div></div>')
 					.appendTo(list);
 			});
 		},

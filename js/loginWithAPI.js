@@ -86,6 +86,7 @@ function statusEnter() {
         $("#link").append("<a href='" + url + "' target='_blank'>" + "  link" + "</a>");
         $("#iFramePhone").attr('src', url);
         $('#inputUser').val(MachineName);
+        display_ct();
     }
 }
 
