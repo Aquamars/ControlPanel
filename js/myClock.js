@@ -41,12 +41,66 @@ function changeCity() {
     });
 }
 
+// function changeAssignCity() {
+//     var zone = $("#astz").find(":selected").val();
+//     $("#ascity option").remove();
+//     $.each(timeZone[zone], function(key, value) {
+//         $('#ascity')
+//             .append($("<option></option>")
+//                 .attr("value", value)
+//                 .text(value));
+//     });    
+// }
+
+// $("select#ascity").change(function(){
+//     dateCmp();
+// });
+
+$.each(timeZone, function(key, value) {
+    $('#astz')
+        .append($("<option></option>")
+            .attr("value", key)
+            .text(key));
+});
+
 $.each(timeZone, function(key, value) {
     $('#tz')
         .append($("<option></option>")
             .attr("value", key)
             .text(key));
 });
+
+$("#assignDate").click(function() {
+    if ($("#assignDate").prop("checked")) {  
+        $("#asignSchedule").show();
+    } else {
+        $("#asignSchedule").hide();
+    }
+});
+
+// function dateCmp(){
+
+//     var astimeZone = "";
+//     var zone = $("#astz").find(":selected").val();
+//     var city = $('#ascity').find(":selected").val();    
+//     if (city != undefined){
+//       astimeZone = zone + "/" + city;
+//       console.log(astimeZone);
+//       // moment.tz.setDefault(timeZone); 
+//     } 
+//     var date = $("#aspicker").val();
+//     var hr = $("#ashr").find(":selected").val();
+//     var min = $('#asmin').find(":selected").val();
+//     var times = date+" "+hr+":"+min;
+//     console.log(times);
+//     moment(times).format();
+//     moment.tz.setDefault("Asia/Taipei");
+//     var m = moment(times).tz("Asia/Taipei");
+//     var show = m.tz(astimeZone).format('YYYY/MM/DD hh:mm:ss');
+//     console.log(m.tz("Asia/Tokyo").format('YYYY/MM/DD hh:mm:ss'));
+//     console.log(m.tz("Asia/Taipei").format('YYYY/MM/DD hh:mm:ss'));    
+//     $("#dateCmp").text("= Taipei Time : "+show);
+// }
 
 function display_c() {
     var refresh = 1000; // Refresh rate in milli seconds
@@ -63,9 +117,14 @@ function display_ct() {
       timeZone = zone + "/" + city;
       // moment.tz.setDefault(timeZone); 
     } 
-    // var nowTime = moment.tz(x, timeZone).format('YYYY/MM/DD A hh:mm:ss');
+    // var taipeiTime = moment.tz(x, "Asia/Taipei").format('YYYY/MM/DD A hh:mm:ss');
+    var TaipeiDate = moment.tz(x, "Asia/Taipei").format('YYYY/MM/DD');
+    var TaipeiTimes = moment.tz(x, "Asia/Taipei").format('A hh:mm:ss');
+
     var nowDate = moment.tz(x, timeZone).format('YYYY/MM/DD');
     var nowTimes = moment.tz(x, timeZone).format('A hh:mm:ss');
+    
+    document.getElementById('currentTaiwan').innerHTML = '<div style="margin:0 auto;text-align:center;">'+"Asia/Taipei"+"<br>"+TaipeiDate+"<br>"+TaipeiTimes+"</div>";
     document.getElementById('current').innerHTML = '<div style="margin:0 auto;text-align:center;">'+timeZone+"<br>"+nowDate+"<br>"+nowTimes+"</div>";
     tt = display_c();
     // $('#clock').html(timeZone+"	"+nowTime);

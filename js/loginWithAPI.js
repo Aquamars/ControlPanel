@@ -93,13 +93,27 @@ function statusEnter() {
 function updateUrl() {
     var url = $('#curl').val();
     if ($('.error').css('display') == 'none' || $('.error').length == 0 && url.length != 0) {
-        if (confirm("Are you sure change AD url?\n" + "Your url : " + url)) {
-            var MachineName = getCookie('cname');
-            setPageUrl(MachineName, url);
-            getAllMachine();
-            saveStatusCookie(MachineName);
-            document.location = "status.html";
-        }
+        
+        if ($("#assignDate").prop("checked")) {
+            var date = $("#aspicker").val()+" "+$("#ashr").val()+":"+$("#asmin").val();
+            date = moment(date).format('YYYY-MM-DD-hh:mm');
+            console.log(date);
+            if (confirm("Are you sure change AD url?\n" + "Setting date :" + date + "\nYour url : " + url)) {
+                var MachineName = getCookie('cname');               
+                setSchedule(MachineName, url, date);
+                getAllMachine();
+                saveStatusCookie(MachineName);
+                document.location = "status.html";
+            }            
+        }else{
+            if (confirm("Are you sure change AD url?\n" + "Your url : " + url)) {
+                var MachineName = getCookie('cname');
+                setPageUrl(MachineName, url);
+                getAllMachine();
+                saveStatusCookie(MachineName);
+                document.location = "status.html";
+            }
+        }        
     } else {
         alert("Wrong URL !");
     }
@@ -195,6 +209,25 @@ function setPageUrl(user, url) {
     try {
         var xhttp = new XMLHttpRequest();
         xhttp.open("GET", "http://tarsan.ddns.net:8080/TARSAN/service/main?service=setPageUrl&jsonPara=[(%22username%22:%22" + user + "%22),(%22url%22:%22" + url + "%22)]", false);
+        xhttp.send();
+        var rep = xhttp.responseText;
+        rep = rep.replace(/\{/g, "");
+        rep = rep.replace(/\}/g, "");
+        rep = rep.replace(/\[/g, "");
+        rep = rep.replace(/\]/g, "");
+        rep = "{" + rep + "}";
+        console.log(rep);
+        var obj = JSON.parse(rep);
+        return obj.status;
+    } catch (err) {
+        return "error";
+    }
+}
+
+function setSchedule(user, url, date) {
+    try {
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("GET", "http://tarsan.ddns.net:8080/TARSAN/service/main?service=setSplashSchedule&jsonPara=[(%22username%22:%22" + user + "%22),(%22url%22:%22" + url + "%22),(%22date%22:%22" + date + "%22)]", false);
         xhttp.send();
         var rep = xhttp.responseText;
         rep = rep.replace(/\{/g, "");
