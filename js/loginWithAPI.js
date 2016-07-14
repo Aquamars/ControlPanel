@@ -86,26 +86,48 @@ function statusEnter() {
         $("#link").append("<a href='" + url + "' target='_blank'>" + "  link" + "</a>");
         $("#iFramePhone").attr('src', url);
         $('#inputUser').val(MachineName);
+        $("#assignDate").prop("checked", false);
+        $("#assignDate2").prop("checked", false);
         display_ct();
+    }
+}
+
+function form_submit() {
+    
+    if ($("#assignDate2").prop("checked")) {
+        var date = $("#aspicker2").val() + " " + $("#ashr2").val() + ":" + $("#asmin2").val();
+        date = moment(date).format('YYYY-MM-DD-HH:mm');
+
+        console.log(date);
+        if (confirm("Are you sure upload this image on schedule?\n" + "Setting date :" + date)) {
+            $('#inputDate').val(date);
+            $('#assign').val("1");
+            document.getElementById("upImage").submit();
+        }
+    } else {
+        if (confirm("Are you sure upload this image ?")) {
+            $('#assign').val("0");
+            document.getElementById("upImage").submit();
+        }
     }
 }
 
 function updateUrl() {
     var url = $('#curl').val();
     if ($('.error').css('display') == 'none' || $('.error').length == 0 && url.length != 0) {
-        
+
         if ($("#assignDate").prop("checked")) {
-            var date = $("#aspicker").val()+" "+$("#ashr").val()+":"+$("#asmin").val();
-            date = moment(date).format('YYYY-MM-DD-hh:mm');
+            var date = $("#aspicker").val() + " " + $("#ashr").val() + ":" + $("#asmin").val();
+            date = moment(date).format('YYYY-MM-DD-HH:mm');
             console.log(date);
             if (confirm("Are you sure change AD url?\n" + "Setting date :" + date + "\nYour url : " + url)) {
-                var MachineName = getCookie('cname');               
+                var MachineName = getCookie('cname');
                 setSchedule(MachineName, url, date);
                 getAllMachine();
                 saveStatusCookie(MachineName);
                 document.location = "status.html";
-            }            
-        }else{
+            }
+        } else {
             if (confirm("Are you sure change AD url?\n" + "Your url : " + url)) {
                 var MachineName = getCookie('cname');
                 setPageUrl(MachineName, url);
@@ -113,7 +135,7 @@ function updateUrl() {
                 saveStatusCookie(MachineName);
                 document.location = "status.html";
             }
-        }        
+        }
     } else {
         alert("Wrong URL !");
     }

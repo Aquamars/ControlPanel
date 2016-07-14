@@ -78,6 +78,14 @@ $("#assignDate").click(function() {
     }
 });
 
+$("#assignDate2").click(function() {
+    if ($("#assignDate2").prop("checked")) {  
+        $("#asignSchedule2").show();
+    } else {
+        $("#asignSchedule2").hide();
+    }
+});
+
 // function dateCmp(){
 
 //     var astimeZone = "";

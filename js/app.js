@@ -40,19 +40,21 @@ function getschedule(user) {
 			console.log(nowTime);
 			console.log(next);
 
-			if(last.getTime()>nowTime.getTime()){
+			if(last.getTime()>nowTime.getTime()){				
 				classSet="event-info";
 				console.log("event-info");
 			}else if(nowTime.getTime()<next.getTime() && last.getTime()<nowTime.getTime()){
 				classSet="event-success";
 				console.log("event-success");
-			}else{
+			}else if(last.getTime()<nowTime.getTime()){
+
 				classSet="event-important";
 				console.log("event-important");
 			}			
-    	}else{
+    	}else{ 		
     		var last = new Date(schedules[i]* 1)
 			var nowTime = new Date(currentTime);
+
 			if(last.getTime()>nowTime.getTime()){
 				classSet="event-info";
 				console.log("event-info");

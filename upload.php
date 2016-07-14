@@ -1,5 +1,7 @@
 <?php
 $user=$_POST['user'];
+$date=$_POST['scheduleDate'];
+$assign=$_POST['assign'];
 if (!file_exists('uploads/'.$user.'/')) {
     $oldmask = umask(0);
     $cf = mkdir('uploads/'.$user.'/',0777);
@@ -55,14 +57,22 @@ if(preg_match("/sorry/i", $message)){
     echo "<script src='js/loginWithAPI.js'></script>";
     echo "<script type='text/javascript'>alert('$message');</script>";    
 }else{
-   // Create index.html
-    $myfile = fopen('uploads/'.$user.'/'."/index.html", "w") or die("Unable to open file!");
+   // Create index.html 
+    $datetsp = new DateTime();
+    $datetsp = $datetsp->getTimestamp();
+    $myfile = fopen('uploads/'.$user.'/'."/".$datetsp.".html", "w") or die("Unable to open file!");
     $txt = "<html><head><meta charset=\"UTF-8\"><title>Untitled Document</title><style>img{width: 100%;height: 100%;}</style></head><body><div><img src=".basename( $_FILES["fileToUpload"]["name"])."></img></div></body></html>";
     fwrite($myfile, $txt);
     fclose($myfile);
     echo "<script src='js/jquery-1.8.3.min.js'></script>";
     echo "<script src='js/loginWithAPI.js'></script>";
-    echo "<script type='text/javascript'>alert('$message');setPageUrl('$user', "."'http://tarsanad.ddns.net/NiceAdmin/"."$target_dir"."index.html'".");getAllMachine();</script>";    
+    echo $assign."\n";
+    if(preg_match("/1/i", $assign)){
+        echo "<script type='text/javascript'>setSchedule('$user', "."'http://tarsanad.ddns.net/NiceAdmin/"."$target_dir".$datetsp.".html','".$date."');getAllMachine();alert('$message');</script>";    
+        echo $datetsp." "."setSchedule('$user', "."'http://tarsanad.ddns.net/NiceAdmin/"."$target_dir".$datetsp.".html,".$date.");";
+    }else{
+        echo "<script type='text/javascript'>setPageUrl('$user', "."'http://tarsanad.ddns.net/NiceAdmin/"."$target_dir"."index.html'".");getAllMachine();alert('$message');</script>";    
+    }
 }
 
 
