@@ -202,8 +202,9 @@ function login(user, pwd) {
 }
 
 function getAllMachine() {
+    var owner = getCookie('user');
     var xhttp = new XMLHttpRequest();
-    xhttp.open("GET", "http://tarsan.ddns.net:8080/TARSAN/service/main?service=getAllMachine&jsonPara=[]", false);
+    xhttp.open("GET", "http://tarsan.ddns.net:8080/TARSAN/service/main?service=getMachineByUser&jsonPara=[(%22owner%22:%22" + owner + "%22)]", false);
     xhttp.send();
     var rep = xhttp.responseText;
     rep = rep.replace(/\{/g, "");
@@ -214,7 +215,7 @@ function getAllMachine() {
     console.log(rep);
     var obj = JSON.parse(rep);
     var msg = obj.message.split(",");
-    if (obj.status != "200") return obj.status;
+    if (obj.status != "200" || msg.length === 1) return obj.status;
     setCookie('allContent', obj.message, 365);
     for (i = 0; i < msg.length; i++) {
         var content = msg[i].split("@");
@@ -222,6 +223,7 @@ function getAllMachine() {
         var url = content[1];
         var redirect = content[2];
         var mac = content[3];
+        // console.log("msg.length:"+i);
         MachineGenerator(name, url);
     }
     return obj.status;
@@ -357,7 +359,6 @@ $("#selectOption").change(function() {
         $('#iFramePhone').height(height);
         $('#showSize').text(width + "x" + height + " (" + $('#selectOption :selected').text() + ")");
     }
-
 });
 
 $("#landscape").click(function() {

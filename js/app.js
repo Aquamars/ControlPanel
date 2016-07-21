@@ -36,20 +36,20 @@ function getschedule(user) {
     		var last = new Date(schedules[i]* 1)
 			var nowTime = new Date(currentTime);
 			var next = new Date(schedules[i+1]* 1);
-			console.log(last);
-			console.log(nowTime);
-			console.log(next);
+			// console.log(last);
+			// console.log(nowTime);
+			// console.log(next);
 
 			if(last.getTime()>nowTime.getTime()){				
 				classSet="event-info";
-				console.log("event-info");
+				// console.log("event-info");
 			}else if(nowTime.getTime()<next.getTime() && last.getTime()<nowTime.getTime()){
 				classSet="event-success";
-				console.log("event-success");
+				// console.log("event-success");
 			}else if(last.getTime()<nowTime.getTime()){
 
 				classSet="event-important";
-				console.log("event-important");
+				// console.log("event-important");
 			}			
     	}else{ 		
     		var last = new Date(schedules[i]* 1)
@@ -57,10 +57,10 @@ function getschedule(user) {
 
 			if(last.getTime()>nowTime.getTime()){
 				classSet="event-info";
-				console.log("event-info");
+				// console.log("event-info");
 			}else{
 				classSet="event-success";
-				console.log("event-success");
+				// console.log("event-success");
 			}
     	}
     	var calobj = {"title": formated,"url":urls[i],"class": classSet,"start":schedules[i]};
