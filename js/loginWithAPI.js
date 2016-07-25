@@ -36,6 +36,8 @@ function checkCookie() {
     var loginResult = login(user, pwd);
     if (loginResult === "200") {
         $("#user").append(user);
+        if (getCookie('user') === "settour")
+            $("#userIcon").attr("src", "img/set.png");
         return "200";
     } else {
         alert("Wrong Username or Password !!");
@@ -93,7 +95,7 @@ function statusEnter() {
 }
 
 function form_submit() {
-    
+
     if ($("#assignDate2").prop("checked")) {
         var date = $("#aspicker2").val() + " " + $("#ashr2").val() + ":" + $("#asmin2").val();
         date = moment(date).format('YYYY-MM-DD-HH:mm');
@@ -180,6 +182,12 @@ function loginEnter() {
         document.location = "index.html";
     }
     console.log("loginEnter");
+}
+
+function handle(e) {
+    if (e.keyCode === 13) {
+        loginEnter();
+    }
 }
 
 function login(user, pwd) {
