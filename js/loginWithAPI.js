@@ -231,10 +231,30 @@ function getAllMachine() {
         var url = content[1];
         var redirect = content[2];
         var mac = content[3];
+        var time = content[5];
+        // console.log("msg.length:"+i);
+        //MachineGenerator(name, url);
+        MachineTableGenerator(i+1,name, url, time);
+    }
+    if(msg.length < 10)cubeMode();
+    return obj.status;
+}
+
+function cubeMode(){
+    $("#cubeMode-btn").hide();
+    var content=getCookie('allContent');
+    var msg = content.split(",");
+    for (i = 0; i < msg.length; i++) {
+        var content = msg[i].split("@");
+        var name = content[0];
+        var url = content[1];
+        var redirect = content[2];
+        var mac = content[3];
+        var time = content[5];
         // console.log("msg.length:"+i);
         MachineGenerator(name, url);
+        // MachineTableGenerator(i+1,name, url, time);
     }
-    return obj.status;
 }
 
 function setPageUrl(user, url) {
@@ -387,6 +407,10 @@ $("#landscape").click(function() {
 function MachineGenerator(name, url) {
     name = name.replace(" ", "");
     $("#reviewAll").append('<div class=\"col-lg-3 col-md-3 col-sm-12 col-xs-12\"><div class=\"info-box ' + InfoBoxColor[makeUniqueRandom()] + '\"><i class=\"fa fa-hdd-o\"></i><div class=\"count\"><a onclick=\"saveStatusCookie(' + "'" + name + "'" + ')\" href=\"status.html\"><font color=\"#FFFFFF\">' + name + '</font></a></div><div><a href=\"' + url + '\" target=\"_blank\">Preview<iframe  class=\"col-md-12 col-sm-12 col-xs-12\" src=\"' + url + '\" frameborder=\"0\" allowfullscreen></iframe></a></div></div></div>');
+}
+function MachineTableGenerator(num, name, url, time) {
+    name = name.replace(" ", "");
+    $("#tableInfo").append('<tr><td>'+num+'</td><td><a onclick=\"saveStatusCookie(' + "'" + name + "'" + ')\" href=\"status.html\"><font color=\"#000000\">' + name + '</font></a></td><td>'+time+'</td><td><a href="'+url+'">'+url+'</a></td></tr>');
 }
 
 var InfoBoxColor = ["linkedin-bg", "twitter-bg", "facebook-bg", "dark-bg", "brown-bg", "teal-bg", "magenta-bg", "lime-bg", "pink-bg", "purple-bg", "orange-bg", "yellow-bg", "green-bg", "blue-bg", "red-bg"];
