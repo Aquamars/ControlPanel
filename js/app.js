@@ -110,11 +110,13 @@ function delSchedule(user,date){
 			list.html('');
 
 			$.each(events, function(key, val) {
-				var delDate = val.title.replace(" ","-");
+				var delDate = val.title.replace(" ","-");				
 				$(document.createElement('li'))
-					.html('<div><div style=" float:left;width:49%;"><a href="' + val.url + '">' + val.title + '</a></div><div style="float:left;width:49%;"><a class="btn btn-danger btn-sm" align="right" onclick="delSchedule('+"'"+MachineName+"','"+delDate+"'"+')">Remove</a></div></div>')
+					.html('<div><div style=" float:left;width:40%;"><a href="' + val.url + '">' + val.title + '</a></div><div style="float:left;width:40%;"><a class="btn btn-danger btn-sm" align="right" onclick="delSchedule('+"'"+MachineName+"','"+delDate+"'"+')">Remove</a></div></div>')
 					.appendTo(list);
 			});
+
+			$("ul li").css("height", "40px");
 		},
 		onAfterViewLoad: function(view) {
 			$('.page-header h3').text(this.getTitle());

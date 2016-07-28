@@ -55,7 +55,7 @@ function eraseCookie() {
     setCookie('redirect', "", 365);
     setCookie('time', "", 365);
     setCookie('allContent', "", 365);
-    console.log("eraseCookie");
+    // console.log("eraseCookie");
     document.location = "login.html";
 }
 
@@ -72,8 +72,10 @@ function statusEnter() {
         var mac = getCookie('mac');
         var redirect = getCookie('redirect');
         var time = getCookie('time');
+        getAccessLog(MachineName);
         lastActiveTime(MachineName);
-        console.log(MachineName + ":" + url + ":" + mac + ":" + time);
+
+        // console.log(MachineName + ":" + url + ":" + mac + ":" + time);
         if (redirect === "false") {
             redirect = "No"
         } else {
@@ -100,7 +102,7 @@ function form_submit() {
         var date = $("#aspicker2").val() + " " + $("#ashr2").val() + ":" + $("#asmin2").val();
         date = moment(date).format('YYYY-MM-DD-HH:mm');
 
-        console.log(date);
+        // console.log(date);
         if (confirm("Are you sure upload this image on schedule?\n" + "Setting date :" + date)) {
             $('#inputDate').val(date);
             $('#assign').val("1");
@@ -121,7 +123,7 @@ function updateUrl() {
         if ($("#assignDate").prop("checked")) {
             var date = $("#aspicker").val() + " " + $("#ashr").val() + ":" + $("#asmin").val();
             date = moment(date).format('YYYY-MM-DD-HH:mm');
-            console.log(date);
+            // console.log(date);
             if (confirm("Are you sure change AD url?\n" + "Setting date :" + date + "\nYour url : " + url)) {
                 var MachineName = getCookie('cname');
                 setSchedule(MachineName, url, date);
@@ -240,6 +242,30 @@ function getAllMachine() {
     return obj.status;
 }
 
+function getAccessLog(name){
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("GET", "http://tarsan.ddns.net:8080/TARSAN/service/main?service=getConnectLogByUsername&jsonPara=[(%22username%22:%22" + name + "%22)]", false);
+    xhttp.send();
+    var rep = xhttp.responseText;
+    rep = rep.replace(/\{/g, "");
+    rep = rep.replace(/\}/g, "");
+    rep = rep.replace(/\[/g, "");
+    rep = rep.replace(/\]/g, "");
+    rep = "{" + rep + "}";
+    console.log(rep);
+    var obj = JSON.parse(rep);
+    var msg = obj.message;
+    var content = msg.split(",")
+
+    for (i = 0; i < content.length; i++) {
+        log = content[i].split("@");
+        var ip = log[0];
+        var time = log[1];
+        var type = log[2];
+        if(content.length!=1)AccessLogTableGenerator(time, ip, type);
+    }
+}
+
 function cubeMode(){
     $("#cubeMode-btn").hide();
     var content=getCookie('allContent');
@@ -268,7 +294,7 @@ function setPageUrl(user, url) {
         rep = rep.replace(/\[/g, "");
         rep = rep.replace(/\]/g, "");
         rep = "{" + rep + "}";
-        console.log(rep);
+        // console.log(rep);
         var obj = JSON.parse(rep);
         return obj.status;
     } catch (err) {
@@ -287,7 +313,7 @@ function setSchedule(user, url, date) {
         rep = rep.replace(/\[/g, "");
         rep = rep.replace(/\]/g, "");
         rep = "{" + rep + "}";
-        console.log(rep);
+        // console.log(rep);
         var obj = JSON.parse(rep);
         return obj.status;
     } catch (err) {
@@ -306,7 +332,7 @@ function setSessionTime(user, time) {
         rep = rep.replace(/\[/g, "");
         rep = rep.replace(/\]/g, "");
         rep = "{" + rep + "}";
-        console.log(rep);
+        // console.log(rep);
         var obj = JSON.parse(rep);
         return obj.status;
     } catch (err) {
@@ -322,7 +348,7 @@ function saveStatusCookie(user) {
         var name = content[0];
         name = name.replace(" ", "");
         if (name == user) {
-            console.log(content);
+            // console.log(content);
             var url = content[1];
             var redirect = content[2];
             var mac = content[3];
@@ -332,15 +358,14 @@ function saveStatusCookie(user) {
             setCookie('mac', mac, 365);
             setCookie('redirect', redirect, 365);
             setCookie('time', time, 365);
-            console.log(name);
-            console.log(url);
-            console.log(mac);
-            console.log(time);
+            // console.log(name);
+            // console.log(url);
+            // console.log(mac);
+            // console.log(time);
             return "";
         }
     }
 }
-
 function lastActiveTime(name) {
     var xhttp = new XMLHttpRequest();
     xhttp.open("GET", "http://tarsan.ddns.net:8080/TARSAN/service/main?service=getLastActive&jsonPara=[(%22username%22:%22" + name + "%22)]", false);
@@ -351,7 +376,7 @@ function lastActiveTime(name) {
     rep = rep.replace(/\[/g, "");
     rep = rep.replace(/\]/g, "");
     rep = "{" + rep + "}";
-    console.log(rep);
+    // console.log(rep);
     var obj = JSON.parse(rep);
     var msg = obj.message;
     if (obj.status != "200") {
@@ -377,7 +402,7 @@ $("#selectOption").change(function() {
     var tmp = $('#selectOption :selected').val().split('x');
     var width = tmp[0];
     var height = tmp[1];
-    console.log(tmp);
+    // console.log(tmp);
     if ($("#landscape").prop("checked")) {
         $('#iFramePhone').width(height);
         $('#iFramePhone').height(width);
@@ -411,6 +436,9 @@ function MachineGenerator(name, url) {
 function MachineTableGenerator(num, name, url, time) {
     name = name.replace(" ", "");
     $("#tableInfo").append('<tr><td>'+num+'</td><td><a onclick=\"saveStatusCookie(' + "'" + name + "'" + ')\" href=\"status.html\"><font color=\"#000000\">' + name + '</font></a></td><td>'+time+'</td><td><a href="'+url+'">'+url+'</a></td></tr>');
+}
+function AccessLogTableGenerator(time, ip, type) {
+    $("#accessInfo").append('<tr><td><a>'+time+'</a></td><td>'+ip+'</td><td><a>'+type+'</a></td></tr>');
 }
 
 var InfoBoxColor = ["linkedin-bg", "twitter-bg", "facebook-bg", "dark-bg", "brown-bg", "teal-bg", "magenta-bg", "lime-bg", "pink-bg", "purple-bg", "orange-bg", "yellow-bg", "green-bg", "blue-bg", "red-bg"];
