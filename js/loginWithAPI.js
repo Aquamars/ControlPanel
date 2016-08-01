@@ -55,6 +55,7 @@ function eraseCookie() {
     setCookie('redirect', "", 365);
     setCookie('time', "", 365);
     setCookie('allContent', "", 365);
+    setCookie('AccessLog', "", 365);
     // console.log("eraseCookie");
     document.location = "login.html";
 }
@@ -92,6 +93,7 @@ function statusEnter() {
         $('#inputUser').val(MachineName);
         $("#assignDate").prop("checked", false);
         $("#assignDate2").prop("checked", false);
+        $('#aspicker3').val("All");
         display_ct();
     }
 }
@@ -252,11 +254,11 @@ function getAccessLog(name){
     rep = rep.replace(/\[/g, "");
     rep = rep.replace(/\]/g, "");
     rep = "{" + rep + "}";
-    console.log(rep);
+    // console.log(rep);
     var obj = JSON.parse(rep);
     var msg = obj.message;
     var content = msg.split(",")
-
+    setCookie('AccessLog', obj.message, 365);
     for (i = 0; i < content.length; i++) {
         log = content[i].split("@");
         var ip = log[0];
@@ -394,6 +396,43 @@ function uploadImag() {
     console.log("!!!");
 }
 
+function ListAllLog(){
+    var accessLog = getCookie('AccessLog');
+    var content = accessLog.split(",")
+    $('#accessInfo tr').remove();
+    for (i = 0; i < content.length; i++) {
+        log = content[i].split("@");
+        var ip = log[0];
+        var time = log[1];
+        var type = log[2];
+        if(content.length!=1){
+            AccessLogTableGenerator(time, ip, type);  
+        }
+    }
+    $('#aspicker3').val("All");
+}
+
+$("#aspicker3").change(function() {
+    var date = $('#aspicker3').val();
+    var formatDate = moment.tz(date, "Asia/Taipei").format('YYYY-MM-DD');
+    
+    var accessLog = getCookie('AccessLog');
+    var content = accessLog.split(",")
+    $('#accessInfo tr').remove();
+    // document.getElementById("logTable").deleteRow();
+    for (i = 0; i < content.length; i++) {
+        log = content[i].split("@");
+        var ip = log[0];
+        var time = log[1];
+        var type = log[2];
+        var formatTime = moment.tz(time, "Asia/Taipei").format('YYYY-MM-DD');
+        if(content.length!=1&&formatTime===formatDate){
+            // console.log(formatTime+"===="+formatDate);
+
+            AccessLogTableGenerator(time, ip, type);  
+        }
+    }
+});
 $("#selectOption").change(function() {
     /*
      * $(this).val() : #test1 的 value 值

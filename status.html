@@ -43,7 +43,7 @@
       <script src="js/lte-ie7.js"></script>
     <![endif]-->
     <style type="text/css">
-    #myframe {
+    /*#myframe {
         width: 400px;
         height: 640px;
         transform: scale(0.8);
@@ -56,7 +56,7 @@
         -o-transform-origin: 0 0;
         -webkit-transform: scale(0.8); //chrome 
         -webkit-transform-origin: 0 0;
-    }
+    }*/
     
     .clock {
         height: 100px;
@@ -70,6 +70,24 @@
         border-radius: 15px;
         box-shadow: 0 0 7px #222;
         text-shadow: 0 0 3px #fff;
+    }
+    
+    .ui-datepicker-next:after {
+        z-index: 10000;
+        color: black;
+        position: absolute;
+        left: 9px;
+        top: 4px;
+        content: ">";
+    }
+    
+    .ui-datepicker-prev:after {
+        z-index: 10000;
+        color: black;
+        position: absolute;
+        left: 9px;
+        top: 4px;
+        content: "<";
     }
     </style>
 </head>
@@ -493,10 +511,10 @@
                                                             </div>
                                                             <div id="asignSchedule" class="col-lg-offset-2 col-lg-10" style="display:none">
                                                                 <div class="row">
-                                                                    <div class="col-lg-2">
+                                                                    <div class="col-xs-3">
                                                                         <input id="aspicker" type='text' class='form-control' data-language='en' />
                                                                     </div>
-                                                                    <div class="col-lg-3">
+                                                                    <div class="col-xs-6">
                                                                         <li class="fa fa-clock-o"></li>
                                                                         <select id="ashr" class="btn btn-default dropdown-toggle">
                                                                             <option value="00" selected>00</option>
@@ -555,10 +573,10 @@
                                                         </div>
                                                         <div id="asignSchedule2" class="" style="display:none">
                                                             <div class="row">
-                                                                <div class="col-lg-2">
+                                                                <div class="col-xs-3">
                                                                     <input id="aspicker2" type='text' class='form-control' data-language='en' />
                                                                 </div>
-                                                                <div class="col-lg-3">
+                                                                <div class="col-xs-6">
                                                                     <li class="fa fa-clock-o"></li>
                                                                     <select id="ashr2" class="btn btn-default dropdown-toggle">
                                                                         <option value="00" selected>00</option>
@@ -692,16 +710,19 @@
                                 Client Access Information
                             </header>
                             <div class="panel-body">
+
                                 <div class="table-responsive ">
-                                    <table class="table table-striped table-advance table-bordered">
+                                    <div class="col-xs-3 btn btn-primary btn-sm" onclick="ListAllLog()">All</div>
+                                    <div class="col-xs-6"><input id="aspicker3" class='fa fa-calendar form-control' data-language='en'/></div>
+                                    <table id="logTable" class="table table-striped table-advance table-bordered">
                                         <thead>
-                                            <tr>       
+                                            <tr>
                                                 <th>Access Time</th>
                                                 <th>Ip</th>
                                                 <th>Device Type</th>
                                             </tr>
                                         </thead>
-                                        <tbody id="accessInfo">                 
+                                        <tbody id="accessInfo">
                                         </tbody>
                                     </table>
                                 </div>
@@ -778,6 +799,10 @@
         language: 'en',
         timepicker: 'true',
         minDate: new Date() // Now can select only dates, which goes after today
+    })
+    $('#aspicker3').datepicker({
+        language: 'en',
+        timepicker: 'true'
     })
 
     console.log($('#aspicker').val());
