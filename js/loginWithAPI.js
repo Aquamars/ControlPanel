@@ -162,7 +162,6 @@ function updateTime() {
     }
 }
 
-
 function Change(str) {
     $("#" + str + "-btn-update").show();
     $("#" + str + "-btn-cancel").show();
@@ -264,7 +263,10 @@ function getAccessLog(name){
         var ip = log[0];
         var time = log[1];
         var type = log[2];
-        if(content.length!=1)AccessLogTableGenerator(time, ip, type);
+        var num = i + 1;
+        time = time.replace(/\.\d*/g,"");
+                
+        if(content.length!=1)AccessLogTableGenerator(num, time, ip, type);
     }
 }
 
@@ -405,8 +407,11 @@ function ListAllLog(){
         var ip = log[0];
         var time = log[1];
         var type = log[2];
+        var num = i + 1;
+        time = time.replace(/\.\d*/g,"");
+        var timeformat = moment.tz(time, "Asia/Taipei").format('YYYY-MM-DD hh:mm:ss');
         if(content.length!=1){
-            AccessLogTableGenerator(time, ip, type);  
+            AccessLogTableGenerator(num, time, ip, type);  
         }
     }
     $('#aspicker3').val("All");
@@ -420,16 +425,19 @@ $("#aspicker3").change(function() {
     var content = accessLog.split(",")
     $('#accessInfo tr').remove();
     // document.getElementById("logTable").deleteRow();
+    var num = 0;
     for (i = 0; i < content.length; i++) {
         log = content[i].split("@");
         var ip = log[0];
         var time = log[1];
         var type = log[2];
+        time = time.replace(/\.\d*/g,"");
         var formatTime = moment.tz(time, "Asia/Taipei").format('YYYY-MM-DD');
+        
         if(content.length!=1&&formatTime===formatDate){
             // console.log(formatTime+"===="+formatDate);
-
-            AccessLogTableGenerator(time, ip, type);  
+            num = num+1;
+            AccessLogTableGenerator(num, time, ip, type);  
         }
     }
 });
@@ -476,8 +484,8 @@ function MachineTableGenerator(num, name, url, time) {
     name = name.replace(" ", "");
     $("#tableInfo").append('<tr><td>'+num+'</td><td><a onclick=\"saveStatusCookie(' + "'" + name + "'" + ')\" href=\"status.html\"><font color=\"#000000\">' + name + '</font></a></td><td>'+time+'</td><td><a href="'+url+'">'+url+'</a></td></tr>');
 }
-function AccessLogTableGenerator(time, ip, type) {
-    $("#accessInfo").append('<tr><td><a>'+time+'</a></td><td>'+ip+'</td><td><a>'+type+'</a></td></tr>');
+function AccessLogTableGenerator(num, time, ip, type) {
+    $("#accessInfo").append('<tr><td>'+num+'</td><td><a>'+time+'</a></td><td>'+ip+'</td><td><a>'+type+'</a></td></tr>');
 }
 
 var InfoBoxColor = ["linkedin-bg", "twitter-bg", "facebook-bg", "dark-bg", "brown-bg", "teal-bg", "magenta-bg", "lime-bg", "pink-bg", "purple-bg", "orange-bg", "yellow-bg", "green-bg", "blue-bg", "red-bg"];
