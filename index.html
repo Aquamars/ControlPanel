@@ -32,6 +32,11 @@
     <link href="css/style-responsive.css" rel="stylesheet" />
     <link href="css/xcharts.min.css" rel=" stylesheet">
     <link href="css/jquery-ui-1.10.4.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/bootstrap-tagsinput.css">
+    <link href="css/fileinput.css" media="all" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="css/calendar.css">
+    <link href="css/datepicker.min.css" rel="stylesheet" type="text/css">
+    <link href="css/bootstrap-switch.css" rel="stylesheet">
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 -->
     <!--[if lt IE 9]>
       <script src="js/html5shiv.js"></script>
@@ -49,6 +54,24 @@
         display: block;
         position: relative;
         z-index: 100;
+    }
+    
+    .ui-datepicker-next:after {
+        z-index: 10000;
+        color: black;
+        position: absolute;
+        left: 9px;
+        top: 4px;
+        content: ">";
+    }
+    
+    .ui-datepicker-prev:after {
+        z-index: 10000;
+        color: black;
+        position: absolute;
+        left: 9px;
+        top: 4px;
+        content: "<";
     }
     </style>
 </head>
@@ -371,6 +394,79 @@
                     </div>
                 </div>
                 <div id="reviewAll" class="row">
+                    <div class="col-lg-12"><a>Quick Setting</a></div>
+                    <div class="col-lg-12">
+                        <input id="quickSetting" type="checkbox" >
+                    </div>
+                    <div id="tagsDiv" class="col-lg-12" style="display:none;">
+                        <section class="panel">
+                            <header class="panel-heading">
+                                Tags Input
+                            </header>
+                            <div class="panel-body">
+                                <div class="col-lg-12">
+                                    <input id="tagsinput" type="text" value="" data-role="tagsinput" disabled="disabled" />
+                                </div>
+                                <div class="form-group ">
+                                    <div class="col-lg-12">
+                                        <input class="form-control " id="quickUrl" type="url" name="url" readonly/>
+                                        <a id="quickUrl-btn-update" class="btn btn-primary" onclick="quickupdateUrl()" style="display:none">Update</a>
+                                        <a id="quickUrl-btn-cancel" class="btn btn-default" style="display:none" onclick="Cancel('quickUrl')">Cancel</a>
+                                        <button id="quickUrl-btn-change" class="btn btn-info " type="button" onclick="Change('quickUrl')">Change</button>
+                                        <label id="assignLabel">
+                                            <input id="assignDate" type="checkbox"> Assign Date
+                                        </label>
+                                    </div>
+                                    <div id="asignSchedule" class="col-lg-10" style="display:none">
+                                        <div class="row">
+                                            <div class="col-lg-2">
+                                                <input id="aspicker" type='text' class='form-control' data-language='en' />
+                                            </div>
+                                            <div class="col-xs-6">
+                                                <li class="fa fa-clock-o"></li>
+                                                <select id="ashr" class="btn btn-default dropdown-toggle">
+                                                    <option value="00" selected>00</option>
+                                                    <option value="01">01</option>
+                                                    <option value="02">02</option>
+                                                    <option value="03">03</option>
+                                                    <option value="04">04</option>
+                                                    <option value="05">05</option>
+                                                    <option value="06">06</option>
+                                                    <option value="07">07</option>
+                                                    <option value="08">08</option>
+                                                    <option value="09">09</option>
+                                                    <option value="10">10</option>
+                                                    <option value="11" selected>11</option>
+                                                    <option value="12">12</option>
+                                                    <option value="13">13</option>
+                                                    <option value="14">14</option>
+                                                    <option value="15">15</option>
+                                                    <option value="16">16</option>
+                                                    <option value="17">17</option>
+                                                    <option value="18">18</option>
+                                                    <option value="19">19</option>
+                                                    <option value="20">20</option>
+                                                    <option value="21">21</option>
+                                                    <option value="22">22</option>
+                                                    <option value="23">23</option>
+                                                </select>
+                                                :
+                                                <select id="asmin" class="btn btn-default dropdown-toggle">
+                                                    <option value="00" selected>00</option>
+                                                    <option value="15">15</option>
+                                                    <option value="30">30</option>
+                                                    <option value="45">45</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-lg-2">
+                                                <p id="dateCmp"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
                     <div class="col-lg-12">
                         <section class="panel">
                             <header class="panel-heading">
@@ -381,6 +477,9 @@
                                     <thead>
                                         <tr>
                                             <th>#</th>
+                                            <th>
+                                                <input type="checkbox" id="selectAll" style="display:none;">
+                                            </th>
                                             <th>Machine Name</th>
                                             <th>Last Active Time</th>
                                             <th>Ad Url Preview</th>
@@ -399,7 +498,7 @@
                         </section>
                     </div>
                     <div id="cubeMode-btn" class="col-lg-12">
-                    <a  class="btn btn-primary" onclick="cubeMode()"><span class="fa fa-th-large"></span> Cube mode</a> <strong>Machine too many NOT recommend.</strong>
+                        <a class="btn btn-primary" onclick="cubeMode()"><span class="fa fa-th-large"></span> Cube mode</a> <strong>Machine too many NOT recommend.</strong>
                     </div>
                     <!--/.col-->
                     <!--<div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
@@ -442,76 +541,93 @@
     <script src="assets/jquery-easy-pie-chart/jquery.easy-pie-chart.js"></script>
     <script src="js/owl.carousel.js"></script>
     <!-- jQuery full calendar -->
-    <script src="js/fullcalendar.min.js"></script>
-        <!-- Full Google Calendar - Calendar -->
-        <script src="assets/fullcalendar/fullcalendar/fullcalendar.js"></script>
-        <!--script for this page only-->
-        <script src="js/calendar-custom.js"></script>
-        <script src="js/jquery.rateit.min.js"></script>
-        <!-- custom select -->
-        <script src="js/jquery.customSelect.min.js"></script>
-        <script src="assets/chart-master/Chart.js"></script>
-        <!--custome script for all page-->
-        <script src="js/scripts.js"></script>
-        <!-- custom script for this page-->
-        <script src="js/sparkline-chart.js"></script>
-        <script src="js/easy-pie-chart.js"></script>
-        <script src="js/jquery-jvectormap-1.2.2.min.js"></script>
-        <script src="js/jquery-jvectormap-world-mill-en.js"></script>
-        <script src="js/xcharts.min.js"></script>
-        <script src="js/jquery.autosize.min.js"></script>
-        <script src="js/jquery.placeholder.min.js"></script>
-        <script src="js/gdp-data.js"></script>
-        <script src="js/morris.min.js"></script>
-        <script src="js/sparklines.js"></script>
-        <script src="js/charts.js"></script>
-        <script src="js/jquery.slimscroll.min.js"></script>
-        <script src="js/loginWithAPI.js"></script>
-        <script>
-        //knob
-        $(function() {
-            $(".knob").knob({
-                'draw': function() {
-                    $(this.i).val(this.cv + '%')
-                }
-            })
+    <!--<script src="js/fullcalendar.min.js"></script>-->
+    <!-- Full Google Calendar - Calendar -->
+    <!--<script src="assets/fullcalendar/fullcalendar/fullcalendar.js"></script>-->
+    <!--script for this page only-->
+    <!--<script src="js/calendar-custom.js"></script>-->
+    <script src="js/jquery.rateit.min.js"></script>
+    <!-- custom select -->
+    <script src="js/jquery.customSelect.min.js"></script>
+    <script src="assets/chart-master/Chart.js"></script>
+    <!--custome script for all page-->
+    <script src="js/scripts.js"></script>
+    <!-- custom script for this page-->
+    <script src="js/sparkline-chart.js"></script>
+    <script src="js/easy-pie-chart.js"></script>
+    <script src="js/jquery-jvectormap-1.2.2.min.js"></script>
+    <script src="js/jquery-jvectormap-world-mill-en.js"></script>
+    <script src="js/xcharts.min.js"></script>
+    <script src="js/jquery.autosize.min.js"></script>
+    <script src="js/jquery.placeholder.min.js"></script>
+    <script src="js/gdp-data.js"></script>
+    <script src="js/morris.min.js"></script>
+    <script src="js/sparklines.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/jquery.slimscroll.min.js"></script>
+    <script type="text/javascript" src="js/moment.js"></script>
+    <script src="js/moment-timezone-with-data.js"></script>
+    <script src="js/bootstrap-switch.min.js"></script>
+    <script src="js/loginWithAPI.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+    <script src="js/bootstrap-tagsinput-angular.js"></script>
+    <script src="js/bootstrap-tagsinput.js"></script>
+    <script type="text/javascript" src="js/calendar.js"></script>
+    <script type="text/javascript" src="js/myClock.js"></script>
+    <script>
+    //knob
+    $('#aspicker').datepicker({
+        language: 'en',
+        timepicker: 'true',
+        minDate: new Date() // Now can select only dates, which goes after today
+    });
+    $(function(argument) {
+        $('#quickSetting').bootstrapSwitch();
+        $('#quickSetting').bootstrapSwitch('state', false);
+    })
+    $(function() {
+        $(".knob").knob({
+            'draw': function() {
+                $(this.i).val(this.cv + '%')
+            }
+        })
+    });
+
+    //carousel
+    $(document).ready(function() {
+        $("#owl-slider").owlCarousel({
+            navigation: true,
+            slideSpeed: 300,
+            paginationSpeed: 400,
+            singleItem: true
+
         });
+    });
 
-        //carousel
-        $(document).ready(function() {
-            $("#owl-slider").owlCarousel({
-                navigation: true,
-                slideSpeed: 300,
-                paginationSpeed: 400,
-                singleItem: true
+    //custom select box
 
-            });
+    $(function() {
+        $('select.styled').customSelect();
+    });
+
+    /* ---------- Map ---------- */
+    $(function() {
+        $('#map').vectorMap({
+            map: 'world_mill_en',
+            series: {
+                regions: [{
+                    values: gdpData,
+                    scale: ['#000', '#000'],
+                    normalizeFunction: 'polynomial'
+                }]
+            },
+            backgroundColor: '#eef3f7',
+            onLabelShow: function(e, el, code) {
+                el.html(el.html() + ' (GDP - ' + gdpData[code] + ')');
+            }
         });
-
-        //custom select box
-
-        $(function() {
-            $('select.styled').customSelect();
-        });
-
-        /* ---------- Map ---------- */
-        $(function() {
-            $('#map').vectorMap({
-                map: 'world_mill_en',
-                series: {
-                    regions: [{
-                        values: gdpData,
-                        scale: ['#000', '#000'],
-                        normalizeFunction: 'polynomial'
-                    }]
-                },
-                backgroundColor: '#eef3f7',
-                onLabelShow: function(e, el, code) {
-                    el.html(el.html() + ' (GDP - ' + gdpData[code] + ')');
-                }
-            });
-        });
-        </script>
+    });
+    </script>
 </body>
 
 </html>

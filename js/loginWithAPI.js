@@ -147,6 +147,34 @@ function updateUrl() {
     }
 }
 
+function quickupdateUrl() {
+    var url = $('#quickUrl').val();
+    if ($('.error').css('display') == 'none' || $('.error').length == 0 && url.length != 0 && $("#tagsinput").val().length != 0) {
+        if ($("#assignDate").prop("checked")) {
+            var date = $("#aspicker").val() + " " + $("#ashr").val() + ":" + $("#asmin").val();
+            date = moment(date).format('YYYY-MM-DD-HH:mm');
+            // console.log(date);
+            if (confirm("Are you sure change AD url?\n" + "Setting date :" + date + "\nYour url : " + url+"\nChanged Machines : " +$("#tagsinput").val())) {
+                var MachineName = $("#tagsinput").val();
+                setSchedule(MachineName, url, date);
+                getAllMachine();
+                // saveStatusCookie(MachineName);
+                document.location = "index.html";
+            }
+        } else {
+            if (confirm("Are you sure change AD url?\n" + "Your url : " + url+"\nChanged Machines : " +$("#tagsinput").val())) {
+                var MachineName = $("#tagsinput").val();
+                setPageUrl(MachineName, url);
+                getAllMachine();
+                // saveStatusCookie(MachineName);
+                document.location = "index.html";
+            }
+        }
+    } else {
+        alert("Wrong URL ! \nor\nWorng Machine !");
+    }
+}
+
 function updateTime() {
     var time = $('#time').val();
     if (!(time < 0 || time > 7200) && isNaN(time)) {
@@ -223,7 +251,7 @@ function getAllMachine() {
     rep = rep.replace(/\[/g, "");
     rep = rep.replace(/\]/g, "");
     rep = "{" + rep + "}";
-    console.log(rep);
+    // console.log(rep);
     var obj = JSON.parse(rep);
     var msg = obj.message.split(",");
     if (obj.status != "200" || msg.length === 1) return obj.status;
@@ -237,6 +265,7 @@ function getAllMachine() {
         var time = content[5];
         // console.log("msg.length:"+i);
         //MachineGenerator(name, url);
+        // console.log(content);
         MachineTableGenerator(i+1,name, url, time);
     }
     if(msg.length < 10)cubeMode();
@@ -264,9 +293,9 @@ function getAccessLog(name){
         var time = log[1];
         var type = log[2];
         var num = i + 1;
-        time = time.replace(/\.\d*/g,"");
+        
                 
-        if(content.length!=1)AccessLogTableGenerator(num, time, ip, type);
+        if(content.length!=1)time = time.replace(/\.\d*/g,"");AccessLogTableGenerator(num, time, ip, type);
     }
 }
 
@@ -370,6 +399,7 @@ function saveStatusCookie(user) {
         }
     }
 }
+
 function lastActiveTime(name) {
     var xhttp = new XMLHttpRequest();
     xhttp.open("GET", "http://tarsan.ddns.net:8080/TARSAN/service/main?service=getLastActive&jsonPara=[(%22username%22:%22" + name + "%22)]", false);
@@ -441,6 +471,20 @@ $("#aspicker3").change(function() {
         }
     }
 });
+
+function taginput(name){
+    var tmp = $("#select_"+name).val();
+    var trClass = "tr_"+tmp;
+    if ($("#select_"+name).prop("checked")) {        
+        $('#tagsinput').tagsinput('add',tmp );        
+        $("#"+trClass).attr("class","warning");
+    } else {                
+        $('#tagsinput').tagsinput('remove',tmp );
+        $("#"+trClass).attr("class","");
+    }
+    // console.log(trClass);
+}
+
 $("#selectOption").change(function() {
     /*
      * $(this).val() : #test1 的 value 值
@@ -476,13 +520,59 @@ $("#landscape").click(function() {
     }
 });
 
+$("#selectAll").click(function() {
+    var val="";
+    if ($("#selectAll").prop("checked")) {
+        // $("#tagsinput").val("");
+        $('#tagsinput').tagsinput('removeAll');
+        $("input[name='selectMachine[]']").each(function() {
+            $(this).prop("checked", true);
+            var trClass = "tr_"+$(this).val();
+            $("#"+trClass).attr("class","warning");
+            var tmp = $(this).val();
+            $('#tagsinput').tagsinput('add',tmp );
+            if(val===""){
+                val = $(this).val();
+            }else{
+              val=val+ "," + $(this).val();  
+            }
+        });
+        $("#tagsinput").val(val);
+    }else {
+        // $("#tagsinput").val("");
+        $('#tagsinput').tagsinput('removeAll');
+        $("input[name='selectMachine[]']").each(function() {
+            $(this).prop("checked", false);
+            var trClass = "tr_"+$(this).val();
+            $("#"+trClass).attr("class","");;
+        });
+    }
+});
+
+$('#quickSetting').on('switchChange.bootstrapSwitch', function(event, state) {
+    if(state){
+        $("#tagsDiv").show();
+        $("#selectAll").show();
+        $("input[name='selectMachine[]']").each(function() {
+            $(this).show();
+        });
+    }else{
+        $("#tagsDiv").hide();
+        $("#selectAll").hide();
+        $("input[name='selectMachine[]']").each(function() {
+            $(this).hide();
+        });
+    }  
+});
+
 function MachineGenerator(name, url) {
     name = name.replace(" ", "");
     $("#reviewAll").append('<div class=\"col-lg-3 col-md-3 col-sm-12 col-xs-12\"><div class=\"info-box ' + InfoBoxColor[makeUniqueRandom()] + '\"><i class=\"fa fa-hdd-o\"></i><div class=\"count\"><a onclick=\"saveStatusCookie(' + "'" + name + "'" + ')\" href=\"status.html\"><font color=\"#FFFFFF\">' + name + '</font></a></div><div><a href=\"' + url + '\" target=\"_blank\">Preview<iframe  class=\"col-md-12 col-sm-12 col-xs-12\" src=\"' + url + '\" frameborder=\"0\" allowfullscreen></iframe></a></div></div></div>');
 }
 function MachineTableGenerator(num, name, url, time) {
     name = name.replace(" ", "");
-    $("#tableInfo").append('<tr><td>'+num+'</td><td><a onclick=\"saveStatusCookie(' + "'" + name + "'" + ')\" href=\"status.html\"><font color=\"#000000\">' + name + '</font></a></td><td>'+time+'</td><td><a href="'+url+'">'+url+'</a></td></tr>');
+    // console.log(num+":"+name+":"+url+":"+time);
+    $("#tableInfo").append('<tr id="tr_'+name+'"><td>'+num+'</td><td><input id="select_'+name+'" onclick="taginput('+"'"+name+"'"+')" name="selectMachine[]" type="checkbox" value="'+name+'" style="display:none;"></td><td><a onclick=\"saveStatusCookie(' + "'" + name + "'" + ')\" href=\"status.html\"><font color=\"#000000\">' + name + '</font></a></td><td>'+time+'</td><td><a href="'+url+'">'+url+'</a></td></tr>');
 }
 function AccessLogTableGenerator(num, time, ip, type) {
     $("#accessInfo").append('<tr><td>'+num+'</td><td><a>'+time+'</a></td><td>'+ip+'</td><td><a>'+type+'</a></td></tr>');
