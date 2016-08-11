@@ -36,8 +36,12 @@ function checkCookie() {
     var loginResult = login(user, pwd);
     if (loginResult === "200") {
         $("#user").append(user);
-        if (getCookie('user') === "settour")
+        if (getCookie('user') === "settour"){
             $("#userIcon").attr("src", "img/set.png");
+        }else if(getCookie('user') === "theone"){
+            $("#userIcon").attr("src", "img/theone.jpg");
+        }
+            
         return "200";
     } else {
         alert("Wrong Username or Password !!");
@@ -254,8 +258,9 @@ function getAllMachine() {
     // console.log(rep);
     var obj = JSON.parse(rep);
     var msg = obj.message.split(",");
-    if (obj.status != "200" || msg.length === 1) return obj.status;
+    if (obj.status != "200" || msg.length === 0) return obj.status;
     setCookie('allContent', obj.message, 365);
+    // console.log(msg.length);
     for (i = 0; i < msg.length; i++) {
         var content = msg[i].split("@");
         var name = content[0];
